@@ -5,7 +5,7 @@ describe OmniAuth::Strategies::Twitter do
 
   def app
     Rack::Builder.new {
-      use OmniAuth::Test::PhonySession
+      use OmniAuth::Test::PhonySession 
       use OmniAuth::Builder do
         provider :twitter, 'abc', 'def'
       end

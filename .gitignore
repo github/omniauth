@@ -54,3 +54,4 @@ test/version_tmp
 tmp
 tmtags
 tramp
+/oa-oauth/spec/credentials.yml
