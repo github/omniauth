@@ -21,7 +21,7 @@ To install OmniAuth, simply install the gem:
 
 Continuous Integration
 ----------------------
-[![Build Status](http://travis-ci.org/intridea/omniauth.png)](http://travis-ci.org/intridea/omniauth)
+[![Build Status](https://secure.travis-ci.org/intridea/omniauth.png)](http://travis-ci.org/intridea/omniauth)
 
 Providers
 ---------
@@ -130,7 +130,7 @@ Resources
 ---------
 The best place to find more information is the [OmniAuth Wiki](https://github.com/intridea/omniauth/wiki). Some specific information you might be interested in:
 
-* [CI Build Status](http://travis-ci.org/#!/intridea/omniauth)
+* [CI Build Status](http://travis-ci.org/intridea/omniauth)
 * [Roadmap](https://github.com/intridea/omniauth/wiki/Roadmap)
 * [Changelog](https://github.com/intridea/omniauth/wiki/Changelog)
 * [Report Issues](https://github.com/intridea/omniauth/issues)
@@ -140,6 +140,30 @@ OmniAuth Core
 -------------
 * **Michael Bleigh** ([mbleigh](https://github.com/mbleigh))
 * **Erik Michaels-Ober** ([sferik](https://github.com/sferik))
+
+Supported Rubies
+----------------
+This library aims to support and is [tested
+against](http://travis-ci.org/intridea/omniauth) the following Ruby
+implementations:
+
+* Ruby 1.8.7
+* Ruby 1.9.2
+* Ruby Enterprise Edition 1.8.7
+
+If something doesn't work on one of these interpreters, it should be considered
+a bug.
+
+This library may inadvertently work (or seem to work) on other Ruby
+implementations, however support will only be provided for the versions listed
+above.
+
+If you would like this library to support another Ruby version, you may
+volunteer to be a maintainer. Being a maintainer entails making sure all tests
+run and pass on that implementation. When something breaks on your
+implementation, you will be personally responsible for providing patches in a
+timely fashion. If critical issues for a particular implementation exist at the
+time of a major release, support for that Ruby version may be dropped.
 
 License
 -------
