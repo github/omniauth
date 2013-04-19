@@ -7,7 +7,7 @@ module OmniAuth
       MINOR = 3
     end
     unless defined?(::OmniAuth::Version::PATCH)
-      PATCH = 3
+      PATCH = 2
     end
     unless defined?(::OmniAuth::Version::PRE)
       PRE   = nil
