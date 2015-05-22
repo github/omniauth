@@ -50,7 +50,9 @@ module OmniAuth
       if response = call_through_to_app
         response
       else
-        if request.params['origin']
+        if @name == :cas
+          # do nothing, return_to is handled via query parameter
+        elsif request.params['origin']
           @env['rack.session']['omniauth.origin'] = request.params['origin']
         elsif env['HTTP_REFERER'] && !env['HTTP_REFERER'].match(/#{request_path}$/)
           @env['rack.session']['omniauth.origin'] = env['HTTP_REFERER']
