@@ -1,0 +1,18 @@
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+  <cas:authenticationSuccess>
+    <cas:user>psegel</cas:user>
+    <cas:attributes>
+      <cas:firstname>Peter</cas:firstname>
+      <cas:lastname>Segel</cas:lastname>
+      <cas:title>Mr.</cas:title>
+      <cas:email>psegel@intridea.com</cas:email>
+      <cas:affiliation>staff</cas:affiliation>
+      <cas:affiliation>faculty</cas:affiliation>
+      <cas:location>Washington, D.C.</cas:location>
+      <cas:image>/images/user.jpg</cas:image>
+      <cas:phone>555-555-5555</cas:phone>
+      <cas:hire_date>2004-07-13</cas:hire_date>
+    </cas:attributes>
+    <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
+   </cas:authenticationSuccess>
+</cas:serviceResponse>
