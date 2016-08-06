@@ -73,6 +73,16 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
     it 'should call through to the master app' do
       last_response.body.should == 'true'
     end
+    
+    context 'cas-protocol-2.0' do
+      let(:xml_file_name) { 'cas_success_2.0.xml' }
+      it_behaves_like :successful_validation
+    end
+  
+    context 'cas-protocol-3.0' do
+      let(:xml_file_name) { 'cas_success_3.0.xml' }
+      it_behaves_like :successful_validation
+    end
   end
 
   unless RUBY_VERSION =~ /^1\.8\.\d$/
