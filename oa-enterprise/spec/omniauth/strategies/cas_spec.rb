@@ -58,16 +58,46 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
       @request_uri.scan('ticket=').length.should == 1
     end
 
-    sets_an_auth_hash
-    sets_provider_to 'cas'
-    sets_uid_to 'psegel'
+    context "request.env['omniauth.auth']" do
+      subject { last_request.env['omniauth.auth'] }
 
-    it 'should set additional user information' do
-      extra = (last_request.env['omniauth.auth'] || {})['extra']
-      extra.should be_kind_of(Hash)
-      extra['first-name'].should == 'Peter'
-      extra['last-name'].should == 'Segel'
-      extra['hire-date'].should == '2004-07-13'
+      it { should be_kind_of Hash }
+
+      its(:provider) { should == :cas }
+
+      its(:uid) { should == '54'}
+
+      context 'the info hash' do
+        subject { last_request.env['omniauth.auth']['info'] }
+
+        it { should have(6).items }
+
+        its(:name)       { should == 'Peter Segel' }
+        its(:first_name) { should == 'Peter' }
+        its(:last_name)  { should == 'Segel' }
+        its(:email)      { should == 'psegel@intridea.com' }
+        its(:location)   { should == 'Washington, D.C.' }
+        its(:image)      { should == '/images/user.jpg' }
+        its(:phone)      { should == '555-555-5555' }
+      end
+
+      context 'the extra hash' do
+        subject { last_request.env['omniauth.auth']['extra'] }
+
+        it { should have(3).items }
+
+        its(:user)       { should == 'psegel' }
+        its(:employeeid) { should == '54' }
+        its(:hire_date)  { should == '2004-07-13' }
+      end
+
+      context 'the credentials hash' do
+        subject { last_request.env['omniauth.auth']['credentials'] }
+
+        it { should have(1).items }
+
+        its(:ticket) { should == '593af' }
+      end
     end
 
     it 'should call through to the master app' do
