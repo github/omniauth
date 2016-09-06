@@ -13,9 +13,6 @@ module OmniAuth
 
       @uid_key = 'user'
 
-      # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
-      AuthHashSchemaKeys = %w{name email first_name last_name location image phone}
-
       def userHash
         {
            'name' => raw_info['name'],
@@ -33,8 +30,8 @@ module OmniAuth
       end
 
       def initialize(app, options = {}, &block)
-      super(app, options[:name] || :cas, options.dup, &block)
-        @configuration = OmniAuth::Strategies::CAS::Configuration.new(options)
+        super(app, options[:name] || :cas, options.dup, &block)
+          @configuration = OmniAuth::Strategies::CAS::Configuration.new(options)
       end
 
       protected
@@ -55,7 +52,6 @@ module OmniAuth
         return fail!(:no_ticket, 'No CAS Ticket') unless @ticket
 
         self.raw_info = ServiceTicketValidator.new(@configuration, callback_url, @ticket).user_info
-        #self.raw_info = ServiceTicketValidator.new(self, @options, callback_url, @ticket).user_info
 
         return fail!(:invalid_ticket, 'Invalid CAS Ticket') if raw_info.empty?
 
@@ -67,7 +63,7 @@ module OmniAuth
           'uid' => @raw_info['user'],
           'extra' => @raw_info,
           'credentials' => {},
-          'user_info' => userHash.delete_if { |k, v| v.nil? }
+          'user_info' => prune!(userHash)
         })
       end
 
