@@ -45,7 +45,6 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
   end
 
   describe 'GET /auth/cas/callback with a valid ticket' do
-    # this is where we need to update for cas_spec.3.0.xml
     shared_examples :successful_validation do
       before do
         stub_request(:get, /^http(s)?:\/\/cas.example.org(:8080)?\/serviceValidate\?([^&]+&)?ticket=593af/)
@@ -65,11 +64,9 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
       it { should be_kind_of Hash }
 
       its(["provider"]) { should == "cas" }
-
-
       its(["uid"]) { should == 'psegel'}
 
-      # not actually shared
+      # cas 3.0-only
       context 'the info hash', :if => (:xml_file_name == 'cas_success_3.0.xml') do
         subject { last_request.env['omniauth.auth']['user_info']}
 
