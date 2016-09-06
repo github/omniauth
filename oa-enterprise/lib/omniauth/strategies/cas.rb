@@ -11,16 +11,6 @@ module OmniAuth
       attr_accessor :raw_info
       alias_method :user_info, :raw_info
 
-      def credentials
-         {}
-       end
-      def extra
-         {}
-       end
-      def info
-         {}
-       end
-
       @uid_key = 'user'
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
