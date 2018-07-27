@@ -1,5 +1,5 @@
 require "base64"
-require "uuid"
+require "securerandom"
 require "zlib"
 require "cgi"
 
@@ -9,7 +9,7 @@ module OmniAuth
       class AuthRequest
         
         def create(settings, params = {})
-          uuid = "_" + UUID.new.generate
+          uuid = "_" + SecureRandom.uuid
           time = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
 
           request =
