@@ -34,7 +34,7 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
 
   describe 'GET /auth/cas/callback with an invalid ticket' do
     before do
-      stub_request(:get, /^https:\/\/cas.example.org(:443)?\/serviceValidate\?([^&]+&)?ticket=9391d/).
+      stub_request(:get, /^http(s)?:\/\/cas.example.org(:8080)?\/serviceValidate\?([^&]+&)?ticket=9391d/).
          to_return(:body => File.read(File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'cas_failure.xml')))
       get '/auth/cas/callback?ticket=9391d'
     end
@@ -45,31 +45,68 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
   end
 
   describe 'GET /auth/cas/callback with a valid ticket' do
-    before do
-      stub_request(:get, /^https:\/\/cas.example.org(:443)?\/serviceValidate\?([^&]+&)?ticket=593af/).
-         with { |request| @request_uri = request.uri.to_s }.
-         to_return(:body => File.read(File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'cas_success.xml')))
-      get '/auth/cas/callback?ticket=593af'
-    end
+    shared_examples :successful_validation do
+      before do
+        stub_request(:get, /^http(s)?:\/\/cas.example.org(:8080)?\/serviceValidate\?([^&]+&)?ticket=593af/)
+          .with { |request| @request_uri = request.uri.to_s }
+          .to_return( body: File.read("spec/fixtures/#{xml_file_name}") )
 
-    it 'should strip the ticket parameter from the callback URL before sending it to the CAS server' do
-      @request_uri.scan('ticket=').length.should == 1
-    end
+          get "/auth/cas/callback?ticket=593af&url=#{return_url}"
+      end
 
-    sets_an_auth_hash
-    sets_provider_to 'cas'
-    sets_uid_to 'psegel'
+      it 'should strip the ticket parameter from the callback URL before sending it to the CAS server' do
+        @request_uri.scan('ticket=').length.should == 1
+      end
 
-    it 'should set additional user information' do
-      extra = (last_request.env['omniauth.auth'] || {})['extra']
-      extra.should be_kind_of(Hash)
-      extra['first-name'].should == 'Peter'
-      extra['last-name'].should == 'Segel'
-      extra['hire-date'].should == '2004-07-13'
+    context "request.env['omniauth.auth']" do
+      subject { last_request.env['omniauth.auth'] }
+
+      it { should be_kind_of Hash }
+
+      its(["provider"]) { should == "cas" }
+      its(["uid"]) { should == 'psegel'}
+
+      # cas 3.0-only
+      context 'the info hash', :if => (:xml_file_name == 'cas_success_3.0.xml') do
+        subject { last_request.env['omniauth.auth']['user_info']}
+
+        it { should have(6).items }
+
+        its(["first_name"]) { should == 'Peter' }
+        its(["last_name"])  { should == 'Segel' }
+        its(["email"])      { should == 'psegel@intridea.com' }
+        its(["location"])   { should == 'Washington, D.C.' }
+        its(["image"])      { should == '/images/user.jpg' }
+        its(["phone"])      { should == '555-555-5555' }
+      end
+
+      context 'the extra hash', :if => (:xml_file_name == 'cas_success_3.0.xml') do
+        subject { last_request.env['omniauth.auth']['extra'] }
+
+        it { should have(11).items }
+
+        its(["user"])       { should == 'psegel' }
+        its(["hire_date"])  { should == '2004-07-13' }
+      end
+
     end
 
     it 'should call through to the master app' do
       last_response.body.should == 'true'
+    end
+   end
+
+      let(:return_url) { 'http://127.0.0.10/?some=parameter' }
+
+
+    context 'cas-protocol-2.0' do
+      let(:xml_file_name) { 'cas_success_2.0.xml' }
+      it_behaves_like :successful_validation
+    end
+
+    context 'cas-protocol-3.0' do
+      let(:xml_file_name) { 'cas_success_3.0.xml' }
+      it_behaves_like :successful_validation
     end
   end
 
@@ -78,9 +115,9 @@ describe OmniAuth::Strategies::CAS, :type => :strategy do
       before do
         zipped = StringIO.new
         Zlib::GzipWriter.wrap zipped do |io|
-          io.write File.read(File.join(File.dirname(__FILE__), '..', '..', 'fixtures', 'cas_success.xml'))
+          io.write File.read("spec/fixtures/cas_success_2.0.xml")
         end
-        stub_request(:get, /^https:\/\/cas.example.org(:443)?\/serviceValidate\?([^&]+&)?ticket=593af/).
+        stub_request(:get, /^http(s)?:\/\/cas.example.org(:8080)?\/serviceValidate\?([^&]+&)?ticket=593af/).
            with { |request| @request_uri = request.uri.to_s }.
            to_return(:body => zipped.string, :headers => { 'content-encoding' => 'gzip' })
         get '/auth/cas/callback?ticket=593af'
